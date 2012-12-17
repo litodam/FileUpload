@@ -1,0 +1,36 @@
+﻿@using (Html.BeginForm(ViewContext.Controller.ValueProvider.GetValue("action").RawValue.ToString(), ViewContext.Controller.ValueProvider.GetValue("controller").RawValue.ToString(), FormMethod.Post, new { Id = "uploadForm", Enctype = "multipart/form-data", Class = "form-horizontal" }))
+{
+    <div class="control-group">
+        <label class="control-label">File 1</label>
+
+        <div class="controls">
+            <input type="file" name="file1" />
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">Other</label>
+
+        <div class="controls">
+            <input type="text" name="other" />
+        </div>
+    </div>
+    
+    <div class="control-group">
+        <div class="controls">
+            <button class="btn btn-success">Upload!</button>
+            <button class="btn btn-danger" type="button" id="cancel">Cancel</button>
+        </div>
+    </div>
+}
+
+<div class="hide">
+    <h2>Uploaded files</h2>
+
+    <div id="postData" class="offset1 span10 well">
+        @if (Model != null)
+        {
+            <p>File 1: @Html.Display("File1Data")</p>
+        }
+    </div>
+</div>

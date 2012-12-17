@@ -1,0 +1,9 @@
+﻿@{
+    ViewBag.Title = "Simple file upload";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    
+    var formViewData = new ViewDataDictionary();
+    formViewData.Add("Action", "Upload");
+}
+
+@Html.Partial("_UploadForm", (object)Model, formViewData)

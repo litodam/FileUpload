@@ -1,0 +1,87 @@
+﻿@{
+    ViewBag.Title = "Form data file upload";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    
+    var formViewData = new ViewDataDictionary();
+    formViewData.Add("Action", "Upload");
+}
+
+@Html.Partial("_UploadForm", (object)Model, formViewData)
+
+<h2>Progress</h2>
+<div id="progressConsole">Stand by</div>
+<progress id="progress" max="100" value="0"></progress>
+
+<script type="text/javascript">
+    var progressConsole = document.getElementById("progressConsole");
+    var progress = document.getElementById("progress");
+
+    var form = document.getElementById("uploadForm");
+    var cancel = document.getElementById("cancel");
+    var uploadOperation = null;
+
+    form.addEventListener("submit", function (formEv) {
+        var data = new FormData(form);
+        progressConsole.innerHTML = "Uploading files";
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "@Url.Action(ViewContext.Controller.ValueProvider.GetValue("action").RawValue.ToString())", true);
+        xhr.upload.onprogress = function (ev) {
+            if (ev.lengthComputable) {
+                progress.value = Math.round(10000 * ev.loaded / ev.total) / 100;
+
+                if (ev.loaded == ev.total) {
+                    progressConsole.innerHTML = "Awaiting response";
+                }
+            }
+        }
+        xhr.upload.onload = function (ev) {
+            progressConsole.innerHTML = "Awaiting response";
+        }
+        xhr.onload = function () {
+            progressConsole.innerHTML = "Completed";
+            uploadOperation = null;
+
+            if (xhr.status == 200) {
+                processResponse(JSON.parse(xhr.response));
+            } else {
+                try {
+                    processResponse(JSON.parse(xhr.response));
+                } catch (e) {
+                    processResponse({ Success: false, Message: $(xhr.response).find("h2").text() });
+                }
+            }
+        }
+        xhr.onabort = function () {
+            progressConsole.innerHTML = "Canceled";
+            processResponse({ Success: false, Message: "Canceled" });
+            return false;
+        }
+        xhr.onerror = function () {
+            progressConsole.innerHTML = "Failed";
+            processResponse({ Success: false, Message: "Failed" });
+        }
+        xhr.send(data);
+
+        uploadOperation = xhr;
+        formEv.preventDefault();
+    });
+
+    cancel.addEventListener("click", function () {
+        uploadOperation.abort();
+    });
+
+    function processResponse(response) {
+        if (response.Sucess) {
+            alert(response.Message || "Success!");
+        } else {
+            alert(response.Message || "Error!");
+        }
+    }
+
+    window.onbeforeunload = function () {
+        if (uploadOperation != null) {
+            return "Upload in progress";
+        }
+    }
+</script>

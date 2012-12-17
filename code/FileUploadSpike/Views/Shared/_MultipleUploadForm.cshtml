@@ -1,0 +1,40 @@
+﻿@using (Html.BeginForm("Index", "Home", FormMethod.Post, new { Id = "uploadForm", Enctype = "multipart/form-data", Class = "form-horizontal" }))
+{
+    <div class="control-group">
+        <label class="control-label">File 1</label>
+
+        <div class="controls">
+            <input type="file" name="file1" />
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">File 2</label>
+
+        <div class="controls">
+            <input type="file" name="file2" />
+        </div>
+    </div>
+    
+    <div class="control-group">
+        <label class="control-label">Other</label>
+
+        <div class="controls">
+            <input type="text" name="other" />
+        </div>
+    </div>
+    
+    <div class="control-group">
+        <div class="controls">
+            <button class="btn btn-success">Upload!</button>
+        </div>
+    </div>
+}
+
+<div id="postData">
+    @if (Model != null)
+    {
+        <p>File 1: @Html.Display("File1Data")</p>
+        <p>File 2: @Html.Display("File2Data")</p>
+    }
+</div>
